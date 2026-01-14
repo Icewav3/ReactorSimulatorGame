@@ -1,0 +1,76 @@
+﻿classDiagram
+    GameManager <-- main: Calls
+    CanvasManager <-- GameManager: Calls
+    ReactorManager <-- GameManager: Calls
+    CanvasManager --> Instrument: Stores
+    class main {
+        +GameManager
+    }
+    class GameManager {
+        +ReactorManager
+        +CanvasManager
+        +Update(DeltaTime: float)
+    }
+    class CanvasManager {
+        +list<STD::shared_ptr Instrument> instruments
+        +Initialize()
+        +Update(DeltaTime: float)
+    }
+    class Instrument {
+        <<abstract>>
+        +constructor(xpos: float, ypox: float, length: float, width: float)
+        +bool isbroken
+        +Update(DeltaTime: float)
+        *Draw()
+    }
+    Instrument <|-- Display: inherits
+    class Display {
+        +constructor(type)
+        +SetData(data: bool)
+        +SetData(data: float, min: float, max: float)
+    }
+    Instrument <|-- Control: inherits
+    class Control {
+        +constructor(type)
+        +getData(data: bool)
+        +getData(data: float)
+    }
+    class ReactorManager {
+        +Reactor: reactor
+        +Turbine: turbine
+        +Coolant: coolant
+        +Update()
+    }
+    Reactor <-- ReactorManager: Manages
+    class Reactor {
+        -float temp
+        -float ctrl_rod_pos
+        -float pressure
+        -float heat_output
+        +Update(DeltaTime: float)
+        +UpdateCtrlRodPos(NewPos: float)
+        +getPressure()
+        +getTemp()
+        +getSteamOut()
+    }
+    Reactor --> Coolant: Thermal Energy
+    Turbine <-- ReactorManager: Manages
+    class Turbine {
+        +constructor(maxRPM: int, maxElectricityOut: int, RPMtoElectricCharge: float)
+        -float RPM
+        -float Electricity
+        +Update(DeltaTime: float)
+        -CalculateRPM()
+        -CalculatePowerOut()
+    }
+    ReactorManager --> Coolant: Manages
+    Turbine <-- Coolant: Steam
+    class Coolant {
+        +constructor(MaxFlow: float)
+        -float flowrate
+        -float tempIn
+        -float tempOut
+        -float ThermalTransfer
+        +Update(DeltaTime: float)
+        +UpdateCoolantValve(Input: float)
+    }

@@ -1,0 +1,42 @@
+{
+  "name" : "reactor-simulator-game",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "7e19f3c64cb636ee21f41bfe8558a6dfaae6236f",
+  "dependencies" : [ {
+    "name" : "cgltf",
+    "version>=" : "1.14"
+  }, {
+    "name" : "dirent",
+    "version>=" : "1.26"
+  }, {
+    "name" : "drlibs",
+    "version>=" : "2025-07-23"
+  }, {
+    "name" : "glfw3",
+    "version>=" : "3.4#1"
+  }, {
+    "name" : "miniaudio",
+    "version>=" : "0.11.22"
+  }, {
+    "name" : "mmx",
+    "version>=" : "2022-03-27"
+  }, {
+    "name" : "nanosvg",
+    "version>=" : "2023-12-29"
+  }, {
+    "name" : "qoi",
+    "version>=" : "2023-08-10"
+  }, {
+    "name" : "raylib",
+    "version>=" : "5.5"
+  }, {
+    "name" : "stb",
+    "version>=" : "2024-07-29#1"
+  }, {
+    "name" : "vcpkg-cmake-config",
+    "version>=" : "2024-05-23"
+  }, {
+    "name" : "vcpkg-cmake",
+    "version>=" : "2024-04-23"
+  } ]
+}
