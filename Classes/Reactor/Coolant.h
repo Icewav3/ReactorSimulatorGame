@@ -1,5 +1,6 @@
 ﻿#ifndef CPP_PROJECTS_COOLANT_H
 #define CPP_PROJECTS_COOLANT_H
+#include "ICoolant.h"
 
 /**
  * @class Coolant
@@ -7,7 +8,7 @@
  * This class calculates the amount of heat transferred from the reactor core
  * based on the coolant flow rate, which is controlled by a valve.
  */
-class Coolant {
+class Coolant : public ICoolant {
 public:
 	explicit Coolant(float maxFlow, float heatCapacity);
 

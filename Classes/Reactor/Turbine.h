@@ -1,5 +1,6 @@
 ﻿#ifndef CPP_PROJECTS_TURBINE_H
 #define CPP_PROJECTS_TURBINE_H
+#include "ITurbine.h"
 
 /**
  * @class Turbine
@@ -7,7 +8,7 @@
  * This class converts thermal energy (heat) from the coolant system into rotational speed (RPM)
  * and then into electrical power output.
  */
-class Turbine {
+class Turbine : public ITurbine{
 public:
 	Turbine(int maxRPM, int maxElectricityOut, float rpmToElectricCharge, float minRPMToGenerate);
 

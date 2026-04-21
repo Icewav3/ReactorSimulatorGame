@@ -1,5 +1,6 @@
 ﻿#ifndef CPP_PROJECTS_REACTOR_H
 #define CPP_PROJECTS_REACTOR_H
+#include "IReactor.h"
 
 /**
  * @class Reactor
@@ -7,7 +8,7 @@
  * This class manages the reactor's temperature, pressure, and heat output based on the control rod positions.
  * It also tracks failure conditions like meltdowns or over-pressurization.
  */
-class Reactor {
+class Reactor : public IReactor {
 public:
 	Reactor(float maxTemp, float maxPressure, float maxHeatOutput);
 

@@ -7,8 +7,8 @@
 
 int main() {
 	// Initialize the window
-	const int screenWidth = GetMonitorWidth(0);
-	const int screenHeight = GetMonitorHeight(0);
+	const int screenWidth = GetScreenWidth();
+	const int screenHeight = GetScreenHeight();
 
 	InitWindow(screenWidth, screenHeight, "Reactor Simulator");
 	SetTargetFPS(60);

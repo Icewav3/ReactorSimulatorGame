@@ -1,4 +1,5 @@
 ﻿#include "Reactor.h"
+#include "IReactor.h"
 #include <algorithm>
 #include <cstdlib>
 

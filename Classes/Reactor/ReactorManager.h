@@ -37,9 +37,9 @@ public:
 
 private:
 	// Components are managed by smart pointers for safe, automatic memory management.
-	std::unique_ptr<Reactor> reactor_;
-	std::unique_ptr<Turbine> turbine_;
-	std::unique_ptr<Coolant> coolant_;
+	std::unique_ptr<IReactor> reactor_;
+	std::unique_ptr<ITurbine> turbine_;
+	std::unique_ptr<ICoolant> coolant_;
 
 	// Member variables for tracking simulation state.
 	float totalRevenue_;
