@@ -1,4 +1,5 @@
 ﻿#include "Classes/UIElements/Slider.h"
+#include "Classes/SimIO/InputBus.h"
 #include <cmath>
 
 Slider::Slider(float x, float y, float width, float height,
@@ -69,31 +70,32 @@ void Slider::SetTheme(Color primary_color) {
 	textColor_ = kDefaultTextColor;
 }
 
-void Slider::Update(float deltaTime) {
+void Slider::Update(float deltaTime, const OutputSnapshot& snap, InputBus& bus) {
+	(void)deltaTime;
+	(void)snap;
 	HandleInput();
-	Draw();
+	if (writer_) writer_(bus, currentValue_);
 }
 
 void Slider::HandleInput() {
 	Vector2 mouse_pos = GetMousePosition();
-	Rectangle handle_bounds = GetHandleBounds();
 
-	// Check hover state
-	isHovered_ = CheckCollisionPointRec(mouse_pos, handle_bounds);
+	// Hover/press hit area is the full slider bounds — clicking anywhere
+	// on the track grabs the handle and jumps it to that position. The
+	// handle-only hitbox was 16x16 which is too small to hit reliably.
+	isHovered_ = CheckCollisionPointRec(mouse_pos, bounds_);
 
-	// Handle mouse interaction
 	if (isHovered_ && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 		isDragging_ = true;
+		SetValue(CalculateValueFromMouse(mouse_pos));
 	}
 
 	if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
 		isDragging_ = false;
 	}
 
-	// Update value while dragging
 	if (isDragging_) {
-		float new_value = CalculateValueFromMouse(mouse_pos);
-		SetValue(new_value);
+		SetValue(CalculateValueFromMouse(mouse_pos));
 	}
 }
 

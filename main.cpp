@@ -6,11 +6,11 @@
 #include "Classes/Reactor/ReactorManager.h"
 
 int main() {
-	// Initialize the window
-	const int screenWidth = GetScreenWidth();
-	const int screenHeight = GetScreenHeight();
+	constexpr int kInitialWidth = 1920;
+	constexpr int kInitialHeight = 1080;
 
-	InitWindow(screenWidth, screenHeight, "Reactor Simulator");
+	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+	InitWindow(kInitialWidth, kInitialHeight, "Reactor Simulator");
 	SetTargetFPS(60);
 
 	// Create managers

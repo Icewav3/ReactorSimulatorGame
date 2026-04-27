@@ -2,6 +2,7 @@
 #define CPP_PROJECTS_DIAL_H
 
 #include "Instrument.h"
+#include <functional>
 #include <string>
 #include "raylib.h"
 
@@ -22,18 +23,22 @@ public:
 		float value,
 		const std::string& label = "");
 
-	void Update(float deltaTime) override;
+	void Update(float deltaTime, const OutputSnapshot& snap, InputBus& bus) override;
+	void Draw() override;
+
+	using Reader = std::function<float(const OutputSnapshot&)>;
+	void SetReader(Reader reader) { reader_ = std::move(reader); }
 
 	void SetValue(float value);
 	void SetLabel(const std::string& label);
 
 private:
-	void Draw() override;
 
 	float minValue_;
 	float maxValue_;
 	float currentValue_;
 	std::string label_;
+	Reader reader_;
 
 	// Visual parameters defining the 270-degree arc of the dial.
 	const float dialStartAngle_ = -225.0f; // Bottom-left

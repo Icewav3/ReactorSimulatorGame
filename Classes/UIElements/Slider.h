@@ -3,6 +3,7 @@
 
 #include "Instrument.h"
 #include <algorithm>
+#include <functional>
 #include <string>
 
 class Slider : public Instrument {
@@ -12,7 +13,11 @@ public:
 	       float min_value = 0.0f, float max_value = 100.0f,
 	       float initial_value = 0.0f, const std::string &label = "");
 
-	void Update(float deltaTime) override;
+	void Update(float deltaTime, const OutputSnapshot& snap, InputBus& bus) override;
+	void Draw() override;
+
+	using Writer = std::function<void(InputBus&, float)>;
+	void SetWriter(Writer writer) { writer_ = std::move(writer); }
 
 	// Simple getters/setters
 	float GetValue() const { return currentValue_; }
@@ -25,9 +30,6 @@ public:
 
 	// Auto-styling based on size
 	void SetTheme(Color primary_color);
-
-protected:
-	void Draw() override;
 
 private:
 	void HandleInput();
@@ -68,6 +70,8 @@ private:
 	// Auto-calculated spacing
 	float labelSpacing_;
 	float valueSpacing_;
+
+	Writer writer_;
 };
 
 #endif // SLIDER_H

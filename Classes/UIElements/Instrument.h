@@ -4,6 +4,9 @@
 #include "raylib.h"
 #include <string>
 
+struct OutputSnapshot;
+class InputBus;
+
 /**
  * @class Instrument
  * @brief An abstract base class for all UI elements in the simulation.
@@ -20,8 +23,14 @@ public:
 		  bounds_{x, y, width, height} {
 	}
 
-	/// Main update method, responsible for logic and rendering.
-	virtual void Update(float deltaTime) = 0;
+	// Reads from snap (frame-stable view of the sim) and writes intents into
+	// bus (drained at frame boundary). Widgets must not touch ReactorManager
+	// directly. Update is read/write only — drawing happens in Draw().
+	virtual void Update(float deltaTime, const OutputSnapshot& snap, InputBus& bus) = 0;
+
+	// Renders the widget. Called by Panel::Draw after panel chrome so the
+	// widget paints on top of the bezel and face.
+	virtual void Draw() = 0;
 
 	// --- Getters ---
 	Vector2 GetPosition() const { return position_; }
@@ -36,8 +45,6 @@ public:
 	}
 
 protected:
-	/// Pure virtual draw method to be implemented by derived classes.
-	virtual void Draw() = 0;
 
 	Vector2 position_;
 	Vector2 size_;

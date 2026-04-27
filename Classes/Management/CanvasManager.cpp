@@ -1,43 +1,34 @@
 #include "Classes/Management/CanvasManager.h"
 #include "Classes/Reactor/ReactorManager.h"
+#include "Classes/SimIO/OutputSnapshot.h"
+#include "Classes/SimIO/InputBus.h"
+#include "Classes/UI/ReactorConsole.h"
+#include "Classes/UI/Theme.h"
 #include <cstdio>
 #include <format>
 
 CanvasManager::CanvasManager()
-	: tempDial_(0, 0, 200, 200, 0, 1000, 0, "TEMP °C"),
-	  rpmDial_(300, 0, 200, 200, 0, 3000, 0, "RPM"),
-	  pressureDial_(600, 0, 200, 200, 0, 60, 0, "Pressure Kpa"),
-	  powerOutputDial_(900, 0, 200, 200, 0, 20000, 0, "Power Output MW"),
-	  fontLoaded_(false) {
+	: fontLoaded_(false) {
 	// Load 7-segment font
 	sevenSegmentFont_ = LoadFont("Resources/7segment.ttf");
-    if (sevenSegmentFont_.texture.id == 0) {
-        // Fallback for different working directory
-        sevenSegmentFont_ = LoadFont("resources/7segment.ttf");
-    }
+	if (sevenSegmentFont_.texture.id == 0) {
+		// Fallback for different working directory
+		sevenSegmentFont_ = LoadFont("resources/7segment.ttf");
+	}
 	fontLoaded_ = sevenSegmentFont_.texture.id != 0;
 
-	// Use std::make_unique for safe, automatic memory management.
-	coolantSlider_ = std::make_unique<Slider>(
-		GetScreenWidth() * 0.1f - 100,
-		GetScreenHeight() * 0.6f,
-		20,
-		200,
+	// CanvasManager is constructed after InitWindow (see main.cpp), so the
+	// screen size is valid here. The console viewport is inset only at the
+	// top to leave a band for the timer (centered) and revenue (right).
+	// Must stay in sync with DrawRevenue / DrawTimer.
+	constexpr float kTopBand = 100.0f;
+	const Rectangle viewport{
 		0.0f,
-		1.0f,
-		0.0f,
-		"Coolant Valve"
-	);
-	controlRodSlider_ = std::make_unique<Slider>(
-		GetScreenWidth() * 0.5f - 100,
-		GetScreenHeight() * 0.6f,
-		20,
-		200,
-		0.0f,
-		1.0f,
-		1.0f,
-		"Control Rods"
-	);
+		kTopBand,
+		static_cast<float>(GetScreenWidth()),
+		static_cast<float>(GetScreenHeight()) - kTopBand,
+	};
+	playConsole_ = std::make_unique<ReactorConsole>(viewport);
 }
 
 CanvasManager::~CanvasManager() {
@@ -87,39 +78,26 @@ void CanvasManager::RenderIntroSequence() {
 }
 
 void CanvasManager::RenderPlayMode(ReactorManager* reactorManager, GameManager* gameManager, float deltaTime) {
-	ClearBackground(RAYWHITE);
+	ClearBackground(Theme::kPanelBeige);
 
 	if (!reactorManager || !gameManager) {
 		return;
 	}
 
-	UpdatePlayModeControls(reactorManager, deltaTime);
-	DrawPlayModeUI(deltaTime);
+	// Build the SimIO contract for this frame and let the console own the
+	// instrument lifecycle. Sliders push into bus; dials read from snap.
+	OutputSnapshot snap = OutputSnapshot::From(*reactorManager);
+	InputBus bus;
+
+	if (playConsole_) {
+		playConsole_->Update(deltaTime, snap, bus);
+		playConsole_->Draw();
+	}
+
 	DrawRevenue(reactorManager->GetRevenue());
 	DrawTimer(gameManager);
-}
 
-void CanvasManager::UpdatePlayModeControls(ReactorManager* reactorManager, float deltaTime) {
-	if (coolantSlider_) {
-		coolantSlider_->Update(deltaTime);
-		reactorManager->SetCoolantValve(coolantSlider_->GetValue());
-	}
-	if (controlRodSlider_) {
-		controlRodSlider_->Update(deltaTime);
-		reactorManager->SetControlRodPosition(controlRodSlider_->GetValue());
-	}
-
-	tempDial_.SetValue(reactorManager->GetReactorTemp());
-	rpmDial_.SetValue(reactorManager->GetTurbineRPM());
-	pressureDial_.SetValue(reactorManager->GetReactorPressure());
-	powerOutputDial_.SetValue(reactorManager->GetTurbinePowerOut());
-}
-
-void CanvasManager::DrawPlayModeUI(float deltaTime) {
-	tempDial_.Update(deltaTime);
-	rpmDial_.Update(deltaTime);
-	pressureDial_.Update(deltaTime);
-	powerOutputDial_.Update(deltaTime);
+	bus.ApplyTo(*reactorManager);
 }
 
 void CanvasManager::DrawSegmentDisplay(const std::string& text, Vector2 position, float fontSize, Color color, const std::string& label) {
@@ -156,19 +134,20 @@ void CanvasManager::DrawRevenue(float revenue) {
 
 void CanvasManager::DrawTimer(GameManager* gameManager) {
 	std::string timerText = gameManager->GetTimerFormatted();
-	int fontSize = 64;
+	int fontSize = 48;
 	Color redColor = { 220, 20, 20, 255 };
+
+	// Top-center, inside the kTopBand reserved by the console viewport.
+	const float yPos = 20.0f;
 
 	if (fontLoaded_) {
 		Vector2 textSize = MeasureTextEx(sevenSegmentFont_, timerText.c_str(), fontSize, 2);
 		float xPos = (GetScreenWidth() - textSize.x) / 2.0f;
-		float yPos = GetScreenHeight() - fontSize - 50;
 		DrawSegmentDisplay(timerText, { xPos, yPos }, fontSize, redColor, "ELAPSED TIME");
 	}
 	else {
 		int textWidth = MeasureText(timerText.c_str(), fontSize);
 		float xPos = (GetScreenWidth() - textWidth) / 2.0f;
-		float yPos = GetScreenHeight() - fontSize - 50;
 		DrawText(timerText.c_str(), xPos, yPos, fontSize, redColor);
 	}
 }

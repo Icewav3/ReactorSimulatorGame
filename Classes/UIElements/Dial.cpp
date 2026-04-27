@@ -1,4 +1,5 @@
 ﻿#include "Dial.h"
+#include "../SimIO/OutputSnapshot.h"
 #include <algorithm>
 #include <iostream>
 #include <raymath.h>
@@ -20,10 +21,10 @@ Dial::Dial(
 	  label_(label) {
 }
 
-void Dial::Update(float deltaTime) {
-	// The Dial is a passive element; its state is updated externally via SetValue.
-	// Update simply calls Draw to render it.
-	Draw();
+void Dial::Update(float deltaTime, const OutputSnapshot& snap, InputBus& bus) {
+	(void)deltaTime;
+	(void)bus;
+	if (reader_) SetValue(reader_(snap));
 }
 
 void Dial::Draw() {
