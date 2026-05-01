@@ -3,8 +3,32 @@
 namespace Theme {
 
 const Font& DefaultFont() {
-	// TODO text pass: load a real font once and cache it here.
-	static const Font font = GetFontDefault();
+	static Font font = []() {
+		Font f = LoadFontEx("Resources/fonts/TerminusTTF-4.49.3.ttf", 20, nullptr, 0);
+		if (f.texture.id == 0) f = GetFontDefault();
+		SetTextureFilter(f.texture, TEXTURE_FILTER_POINT);
+		return f;
+	}();
+	return font;
+}
+
+const Font& BoldFont() {
+	static Font font = []() {
+		Font f = LoadFontEx("Resources/fonts/TerminusTTF-Bold-4.49.3.ttf", 20, nullptr, 0);
+		if (f.texture.id == 0) f = GetFontDefault();
+		SetTextureFilter(f.texture, TEXTURE_FILTER_POINT);
+		return f;
+	}();
+	return font;
+}
+
+const Font& OcrFont() {
+	static Font font = []() {
+		Font f = LoadFontEx("Resources/fonts/OCR-A Regular.ttf", 20, nullptr, 0);
+		if (f.texture.id == 0) f = GetFontDefault();
+		SetTextureFilter(f.texture, TEXTURE_FILTER_BILINEAR);
+		return f;
+	}();
 	return font;
 }
 
@@ -38,12 +62,12 @@ void DrawScrew(Vector2 center, float radius) {
 
 void DrawDymoLabel(Rectangle bounds, const char* text) {
 	DrawRectangleRounded(bounds, 0.25f, 4, kDymoTape);
-	// TODO text pass: real font + kerning.
-	const int fontSize = kFontSizeDymo;
-	const int textWidth = MeasureText(text, fontSize);
-	const float tx = bounds.x + (bounds.width  - static_cast<float>(textWidth)) * 0.5f;
-	const float ty = bounds.y + (bounds.height - static_cast<float>(fontSize))  * 0.5f;
-	DrawText(text, static_cast<int>(tx), static_cast<int>(ty), fontSize, kDymoText);
+	const float fontSize = static_cast<float>(kFontSizeDymo);
+	const Font& font = BoldFont();
+	Vector2 textSize = MeasureTextEx(font, text, fontSize, 0.5f);
+	const float tx = bounds.x + (bounds.width  - textSize.x) * 0.5f;
+	const float ty = bounds.y + (bounds.height - textSize.y) * 0.5f;
+	DrawTextEx(font, text, {tx, ty}, fontSize, 0.5f, kDymoText);
 }
 
 void DrawPanelChrome(Rectangle bounds) {

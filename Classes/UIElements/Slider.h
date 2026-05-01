@@ -19,27 +19,15 @@ public:
 	using Writer = std::function<void(InputBus&, float)>;
 	void SetWriter(Writer writer) { writer_ = std::move(writer); }
 
-	// Simple getters/setters
 	float GetValue() const { return currentValue_; }
-
 	void SetValue(float value);
-
 	void SetRange(float min_val, float max_val);
-
 	void SetLabel(const std::string &label) { label_ = label; }
-
-	// Auto-styling based on size
-	void SetTheme(Color primary_color);
 
 private:
 	void HandleInput();
-
 	void AutoConfigureLayout();
-
 	Vector2 GetHandlePosition() const;
-
-	Rectangle GetTrackBounds() const;
-
 	Rectangle GetHandleBounds() const;
 
 	float CalculateValueFromMouse(Vector2 mouse_pos) const;

@@ -1,9 +1,9 @@
-#include <iostream>
-#include <memory> // For std::unique_ptr
+#include <memory>
 #include "raylib.h"
 #include "Classes/Management/CanvasManager.h"
 #include "Classes/Management/GameManager.h"
 #include "Classes/Reactor/ReactorManager.h"
+#include "Classes/UI/VirtualScreen.h"
 
 int main() {
 	constexpr int kInitialWidth = 1920;
@@ -13,19 +13,17 @@ int main() {
 	InitWindow(kInitialWidth, kInitialHeight, "Reactor Simulator");
 	SetTargetFPS(60);
 
-	// Create managers
+	// Virtual framebuffer must be created after InitWindow (needs GL context).
+	VirtualScreen::Init();
+
 	GameManager gameManager;
 	CanvasManager canvasManager;
-	// Use a smart pointer for automatic memory management.
-	std::unique_ptr<ReactorManager> reactorManager = nullptr;
+	std::unique_ptr<ReactorManager> reactorManager;
 
 	while (!WindowShouldClose()) {
-		float deltaTime = GetFrameTime();
+		const float deltaTime = GetFrameTime();
+		const GameScene currentScene = gameManager.GetCurrentScene();
 
-		// Handle scene transitions
-		GameScene currentScene = gameManager.GetCurrentScene();
-
-		// Input handling for scene transitions
 		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 			switch (currentScene) {
 				case GameScene::MAIN_MENU:
@@ -33,33 +31,28 @@ int main() {
 					break;
 
 				case GameScene::INTRO_SEQUENCE:
-					// Create a new reactor for play mode using a smart pointer.
 					reactorManager = std::make_unique<ReactorManager>();
-					gameManager.Reset(); // Reset statistics for the new game.
+					gameManager.Reset();
 					gameManager.SetScene(GameScene::PLAYING);
 					break;
 
 				case GameScene::END_SCREEN:
-					// Clean up and return to menu. .reset() handles deletion.
 					reactorManager.reset();
 					gameManager.Reset();
 					break;
 
 				case GameScene::PLAYING:
-					// No click action during play
 					break;
 			}
 		}
 
-		// Update game logic
 		if (currentScene == GameScene::PLAYING && reactorManager) {
-			// Pass raw pointers or references to functions that do not take ownership.
 			gameManager.Update(deltaTime, reactorManager.get());
 			reactorManager->Update(deltaTime);
 		}
 
-		// Render
 		BeginDrawing();
+		VirtualScreen::Begin();
 
 		switch (currentScene) {
 			case GameScene::MAIN_MENU:
@@ -72,7 +65,6 @@ int main() {
 
 			case GameScene::PLAYING:
 				if (reactorManager) {
-					// Pass raw pointers or references to functions that do not take ownership.
 					canvasManager.RenderPlayMode(reactorManager.get(), &gameManager, deltaTime);
 				}
 				break;
@@ -81,11 +73,13 @@ int main() {
 				canvasManager.RenderEndScreen(gameManager.GetStatistics());
 				break;
 		}
+
+		VirtualScreen::End();
+		VirtualScreen::Present();
 		EndDrawing();
 	}
 
-	// Cleanup is now automatic thanks to std::unique_ptr.
-
+	VirtualScreen::Shutdown();
 	CloseWindow();
 	return 0;
 }

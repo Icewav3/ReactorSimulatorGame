@@ -27,16 +27,20 @@ inline constexpr Color kPanelGold    = {218, 165,  32, 255}; // caution / lit
 inline constexpr Color kPanelInk     = { 47,  47,  47, 255}; // text, needles
 inline constexpr Color kPanelCream   = {250, 245, 235, 255}; // dial faces
 inline constexpr Color kPanelOrange  = {205, 133,  63, 255}; // accent
-inline constexpr Color kPanelShadow  = {  0,   0,   0,  60}; // soft drop shadow
-inline constexpr Color kPanelHighlight = {255, 255, 255, 40}; // top-edge sheen
-inline constexpr Color kScrewMetal   = {110, 100,  85, 255}; // screw heads
-inline constexpr Color kRivetMetal   = {130, 120, 105, 255}; // rivet heads
-inline constexpr Color kDymoTape     = { 30,  30,  30, 255}; // black label tape
-inline constexpr Color kDymoText     = {235, 230, 215, 255}; // embossed letters
+inline constexpr Color kPanelShadow    = {  0,   0,   0,  60}; // soft drop shadow
+inline constexpr Color kPanelHighlight = {255, 255, 255,  40}; // top-edge sheen
+inline constexpr Color kScrewMetal     = {110, 100,  85, 255}; // screw heads
+inline constexpr Color kRivetMetal     = {130, 120, 105, 255}; // rivet heads
+inline constexpr Color kDymoTape       = { 30,  30,  30, 255}; // black label tape
+inline constexpr Color kDymoText       = {235, 230, 215, 255}; // embossed letters
+inline constexpr Color kZoneGreen      = { 70, 150,  50, 110}; // normal operating arc
+inline constexpr Color kZoneAmber      = {220, 160,  20, 150}; // caution arc
+inline constexpr Color kZoneRed        = {185,  35,  20, 190}; // danger arc
 
 // --- Type ---
-// TODO text pass: replace with a loaded font (e.g. condensed industrial sans).
-const Font& DefaultFont();
+const Font& DefaultFont();   // Terminus regular
+const Font& BoldFont();      // Terminus bold
+const Font& OcrFont();       // OCR-A, for numeric readouts
 inline constexpr int kFontSizeLabel = 12;
 inline constexpr int kFontSizeValue = 18;
 inline constexpr int kFontSizeDymo  = 14;

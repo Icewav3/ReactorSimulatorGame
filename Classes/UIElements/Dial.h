@@ -32,11 +32,17 @@ public:
 	void SetValue(float value);
 	void SetLabel(const std::string& label);
 
+	// warnValue / dangerValue are absolute values in [min, max].
+	// Pass -1 to disable a zone. Defaults: both disabled.
+	void SetZones(float warnValue, float dangerValue = -1.0f);
+
 private:
 
 	float minValue_;
 	float maxValue_;
 	float currentValue_;
+	float warningValue_ = -1.0f;
+	float dangerValue_  = -1.0f;
 	std::string label_;
 	Reader reader_;
 
