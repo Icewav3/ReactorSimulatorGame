@@ -2,7 +2,8 @@
 #include "Panel.h"
 #include "Layout.h"
 #include "../UIElements/Dial.h"
-#include "../UIElements/Slider.h"
+#include "../UIElements/Handwheel.h"
+#include "../UIElements/Lever.h"
 #include "../SimIO/OutputSnapshot.h"
 #include "../SimIO/InputBus.h"
 
@@ -97,20 +98,24 @@ ReactorConsole::ReactorConsole(Rectangle viewport) {
 		const Rectangle ctrlInner = Layout::Inset(rows[1], 24.0f, 24.0f, 24.0f, 40.0f);
 		const auto      ctrlCells = Layout::SplitH(ctrlInner, {1.0f, 1.0f}, 12.0f);
 
-		const Rectangle coolantSlot = Layout::Center(ctrlCells[0], 20.0f, ctrlCells[0].height * 0.7f);
-		const Rectangle rodSlot     = Layout::Center(ctrlCells[1], 20.0f, ctrlCells[1].height * 0.7f);
+		// Handwheel wants square-ish bounds; lever wants tall + narrow.
+		const float wheelDim   = std::min(ctrlCells[0].width * 0.85f, ctrlCells[0].height * 0.95f);
+		const Rectangle wheelSlot = Layout::Center(ctrlCells[0], wheelDim, wheelDim);
+		const Rectangle leverSlot = Layout::Center(ctrlCells[1],
+		                                           std::min(ctrlCells[1].width * 0.55f, 110.0f),
+		                                           ctrlCells[1].height * 0.95f);
 
-		auto coolantSlider = std::make_unique<Slider>(
-			coolantSlot.x, coolantSlot.y, coolantSlot.width, coolantSlot.height,
-			0.0f, 1.0f, 0.0f, "Coolant Valve");
-		coolantSlider->SetWriter([](InputBus& bus, float v) { bus.SetCoolantValve(v); });
-		controlPanel->Add(std::move(coolantSlider));
+		auto coolantWheel = std::make_unique<Handwheel>(
+			wheelSlot.x, wheelSlot.y, wheelSlot.width, wheelSlot.height,
+			0.0f, "COOLANT VALVE");
+		coolantWheel->SetWriter([](InputBus& bus, float v) { bus.SetCoolantValve(v); });
+		controlPanel->Add(std::move(coolantWheel));
 
-		auto rodSlider = std::make_unique<Slider>(
-			rodSlot.x, rodSlot.y, rodSlot.width, rodSlot.height,
-			0.0f, 1.0f, 1.0f, "Control Rods");
-		rodSlider->SetWriter([](InputBus& bus, float v) { bus.SetControlRod(v); });
-		controlPanel->Add(std::move(rodSlider));
+		auto rodLever = std::make_unique<Lever>(
+			leverSlot.x, leverSlot.y, leverSlot.width, leverSlot.height,
+			1.0f, "CONTROL RODS");
+		rodLever->SetWriter([](InputBus& bus, float v) { bus.SetControlRod(v); });
+		controlPanel->Add(std::move(rodLever));
 
 		Add(std::move(controlPanel));
 	}
