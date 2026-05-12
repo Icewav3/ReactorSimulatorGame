@@ -1,5 +1,6 @@
 #include "Handwheel.h"
 #include "../SimIO/InputBus.h"
+#include "../UI/DebugOverlay.h"
 #include "../UI/Theme.h"
 #include "../UI/VirtualScreen.h"
 #include <algorithm>
@@ -102,10 +103,10 @@ void Handwheel::Draw() {
 	{
 		const Font& f = Theme::BoldFont();
 		const char* tag = (currentValue_ > 0.5f) ? "OPEN" : "CLOSED";
-		const Vector2 sz = MeasureTextEx(f, tag, 12.0f, 0.5f);
+		const Vector2 sz = MeasureTextEx(f, tag, 14.0f, 0.5f);
 		const float ax = c.x;
 		const float ay = c.y - radius - 22.0f;
-		DrawTextEx(f, tag, {ax - sz.x * 0.5f, ay - sz.y - 4.0f}, 12.0f, 0.5f, Theme::kPanelInk);
+		DrawTextEx(f, tag, {ax - sz.x * 0.5f, ay - sz.y - 4.0f}, 14.0f, 0.5f, Theme::kPanelInk);
 		DrawTriangle({ax,        ay + 8.0f},
 		             {ax + 5.0f, ay},
 		             {ax - 5.0f, ay},
@@ -228,16 +229,16 @@ void Handwheel::Draw() {
 		const Font& f = Theme::OcrFont();
 		char buf[32];
 		snprintf(buf, sizeof(buf), "POS %3.0f%%", currentValue_ * 100.0f);
-		const Vector2 sz = MeasureTextEx(f, buf, 13.0f, 0.5f);
+		const Vector2 sz = MeasureTextEx(f, buf, 15.0f, 0.5f);
 		DrawTextEx(f, buf,
 		           {c.x - sz.x * 0.5f, c.y + radius + 16.0f},
-		           13.0f, 0.5f, Theme::kPanelInk);
+		           15.0f, 0.5f, Theme::kPanelInk);
 	}
 
 	// --- Dymo label ---
 	if (!label_.empty()) {
 		const Font& f = Theme::BoldFont();
-		const float fs = 12.0f;
+		const float fs = 16.0f;
 		const Vector2 sz = MeasureTextEx(f, label_.c_str(), fs, 0.5f);
 		const float lx = c.x - sz.x * 0.5f;
 		const float ly = c.y + radius + 36.0f;
@@ -245,4 +246,9 @@ void Handwheel::Draw() {
 		DrawRectangleRounded(strip, 0.3f, 4, Theme::kDymoTape);
 		DrawTextEx(f, label_.c_str(), {lx, ly}, fs, 0.5f, Theme::kDymoText);
 	}
+
+	// Must match HandleInput's rimMin/rimMax — keep in sync.
+	DebugOverlay::DrawHitboxRing(c,
+	                             radius * (kRimInner - kRimGrabPad),
+	                             radius * (1.0f + kRimGrabPad));
 }

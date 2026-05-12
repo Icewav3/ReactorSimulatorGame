@@ -3,13 +3,14 @@
 #include "Classes/Management/CanvasManager.h"
 #include "Classes/Management/GameManager.h"
 #include "Classes/Reactor/ReactorManager.h"
+#include "Classes/UI/DebugOverlay.h"
 #include "Classes/UI/VirtualScreen.h"
 
 int main() {
 	constexpr int kInitialWidth = 1920;
 	constexpr int kInitialHeight = 1080;
 
-	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+	SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_BORDERLESS_WINDOWED_MODE);
 	InitWindow(kInitialWidth, kInitialHeight, "Reactor Simulator");
 	SetTargetFPS(60);
 
@@ -23,6 +24,7 @@ int main() {
 	while (!WindowShouldClose()) {
 		const float deltaTime = GetFrameTime();
 		const GameScene currentScene = gameManager.GetCurrentScene();
+		DebugOverlay::Update();
 
 		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 			switch (currentScene) {
@@ -74,6 +76,7 @@ int main() {
 				break;
 		}
 
+		DebugOverlay::DrawHUD();
 		VirtualScreen::End();
 		VirtualScreen::Present();
 		EndDrawing();

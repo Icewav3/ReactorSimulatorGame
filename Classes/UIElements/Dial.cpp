@@ -43,8 +43,16 @@ void Dial::SetZones(float warnValue, float dangerValue) {
 }
 
 void Dial::Draw() {
-	const float radius = std::min(size_.x, size_.y) * 0.5f;
-	const Vector2 center = {position_.x + size_.x * 0.5f, position_.y + size_.y * 0.5f};
+	// Reserve vertical space at the top of the bounding rect for the dymo label
+	// strip, with a small fixed gap between the strip and the dial face. The
+	// circle hugs the top of the remaining area so the label-to-face distance
+	// stays constant regardless of how much slack the cell has.
+	constexpr float kLabelReserve = 36.0f;
+	constexpr float kLabelGap     = 6.0f;
+	const float availH = std::max(size_.y - kLabelReserve - kLabelGap, 10.0f);
+	const float radius = std::min(size_.x, availH) * 0.5f;
+	const Vector2 center = {position_.x + size_.x * 0.5f,
+	                        position_.y + kLabelReserve + kLabelGap + radius};
 
 	// --- Bezel layers ---
 	DrawCircleV(center, radius, Theme::kPanelBrown);
@@ -87,7 +95,7 @@ void Dial::Draw() {
 
 	// --- Tick marks + numeric labels ---
 	const Font& labelFont = Theme::OcrFont();
-	const float labelFontSize = std::clamp(radius * 0.22f, 10.0f, 18.0f);
+	const float labelFontSize = std::clamp(radius * 0.253f, 12.0f, 21.0f);
 	constexpr int kMajorTicks = 10;
 
 	for (int i = 0; i <= kMajorTicks; ++i) {
@@ -162,15 +170,15 @@ void Dial::Draw() {
 	DrawCircleV({center.x - radius * 0.18f, center.y - radius * 0.22f},
 	            radius * 0.48f, {255, 255, 255, 16});
 
-	// --- In-face label (unit / quantity name) ---
+	// --- Label dymo strip (centered above dial face) ---
 	if (!label_.empty()) {
 		const Font& dymoFont = Theme::BoldFont();
-		const float kLabelSize = std::clamp(radius * 0.18f, 11.0f, 16.0f);
+		const float kLabelSize = std::clamp(radius * 0.30f, 14.0f, 24.0f);
 		const Vector2 lsz = MeasureTextEx(dymoFont, label_.c_str(), kLabelSize, 0.5f);
 		const float lx = center.x - lsz.x * 0.5f;
-		const float ly = center.y + radius * 0.40f;
-		// Small dymo strip inside the face
-		const Rectangle strip{lx - 4.0f, ly - 2.0f, lsz.x + 8.0f, lsz.y + 4.0f};
+		// Vertically center the text within the reserved top strip.
+		const float ly = position_.y + (kLabelReserve - lsz.y) * 0.5f;
+		const Rectangle strip{lx - 6.0f, ly - 3.0f, lsz.x + 12.0f, lsz.y + 6.0f};
 		DrawRectangleRounded(strip, 0.3f, 4, Theme::kDymoTape);
 		DrawTextEx(dymoFont, label_.c_str(), {lx, ly}, kLabelSize, 0.5f, Theme::kDymoText);
 	}

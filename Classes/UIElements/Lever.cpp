@@ -1,5 +1,6 @@
 #include "Lever.h"
 #include "../SimIO/InputBus.h"
+#include "../UI/DebugOverlay.h"
 #include "../UI/Theme.h"
 #include "../UI/VirtualScreen.h"
 #include <algorithm>
@@ -81,7 +82,7 @@ void Lever::Draw() {
 	// --- End labels (top: WITHDRAW, bottom: INSERT) ---
 	{
 		const Font& f = Theme::BoldFont();
-		const float fs = 10.0f;
+		const float fs = 12.0f;
 		const Vector2 sw = MeasureTextEx(f, "WITHDRAW", fs, 0.5f);
 		const Vector2 si = MeasureTextEx(f, "INSERT",   fs, 0.5f);
 		DrawTextEx(f, "WITHDRAW", {cx - sw.x * 0.5f, slot.y - fs - 2.0f},
@@ -139,7 +140,7 @@ void Lever::Draw() {
 		const Font& f = Theme::OcrFont();
 		char buf[24];
 		snprintf(buf, sizeof(buf), "%3.0f%%", currentValue_ * 100.0f);
-		const float fs = 12.0f;
+		const float fs = 14.0f;
 		const Vector2 sz = MeasureTextEx(f, buf, fs, 0.5f);
 		DrawTextEx(f, buf,
 		           {h.x + h.width + 6.0f, h.y + h.height * 0.5f - sz.y * 0.5f},
@@ -149,7 +150,7 @@ void Lever::Draw() {
 	// --- Dymo label below pivot ---
 	if (!label_.empty()) {
 		const Font& f = Theme::BoldFont();
-		const float fs = 12.0f;
+		const float fs = 16.0f;
 		const Vector2 sz = MeasureTextEx(f, label_.c_str(), fs, 0.5f);
 		const float lx = cx - sz.x * 0.5f;
 		const float ly = position_.y + size_.y - 14.0f;
@@ -157,4 +158,6 @@ void Lever::Draw() {
 		DrawRectangleRounded(strip, 0.3f, 4, Theme::kDymoTape);
 		DrawTextEx(f, label_.c_str(), {lx, ly}, fs, 0.5f, Theme::kDymoText);
 	}
+
+	DebugOverlay::DrawHitbox(h);
 }

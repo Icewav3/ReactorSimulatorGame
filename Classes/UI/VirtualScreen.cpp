@@ -62,10 +62,15 @@ void VirtualScreen::Present() {
 }
 
 Vector2 VirtualScreen::GetMouse() {
+    // Win11 + FLAG_BORDERLESS_WINDOWED_MODE leaves a ~25px title-bar strip
+    // that the GL framebuffer draws into but GetMousePosition reports below.
+    // Without this offset, hitboxes sit ~25px under their visuals.
+    // Re-check this constant if window flags or platform change.
+    constexpr float kClientChromeY = 25.0f;
     const Layout l = ComputeLayout();
     const Vector2 m = GetMousePosition();
     return {
         (m.x - l.offsetX) / l.scale,
-        (m.y - l.offsetY) / l.scale,
+        (m.y + kClientChromeY - l.offsetY) / l.scale,
     };
 }

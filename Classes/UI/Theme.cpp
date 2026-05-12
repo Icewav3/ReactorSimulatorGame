@@ -4,9 +4,9 @@ namespace Theme {
 
 const Font& DefaultFont() {
 	static Font font = []() {
-		Font f = LoadFontEx("Resources/fonts/TerminusTTF-4.49.3.ttf", 20, nullptr, 0);
+		Font f = LoadFontEx("Resources/fonts/TerminusTTF-4.49.3.ttf", 40, nullptr, 0);
 		if (f.texture.id == 0) f = GetFontDefault();
-		SetTextureFilter(f.texture, TEXTURE_FILTER_POINT);
+		SetTextureFilter(f.texture, TEXTURE_FILTER_BILINEAR);
 		return f;
 	}();
 	return font;
@@ -14,9 +14,9 @@ const Font& DefaultFont() {
 
 const Font& BoldFont() {
 	static Font font = []() {
-		Font f = LoadFontEx("Resources/fonts/TerminusTTF-Bold-4.49.3.ttf", 20, nullptr, 0);
+		Font f = LoadFontEx("Resources/fonts/TerminusTTF-Bold-4.49.3.ttf", 40, nullptr, 0);
 		if (f.texture.id == 0) f = GetFontDefault();
-		SetTextureFilter(f.texture, TEXTURE_FILTER_POINT);
+		SetTextureFilter(f.texture, TEXTURE_FILTER_BILINEAR);
 		return f;
 	}();
 	return font;
@@ -24,7 +24,7 @@ const Font& BoldFont() {
 
 const Font& OcrFont() {
 	static Font font = []() {
-		Font f = LoadFontEx("Resources/fonts/OCR-A Regular.ttf", 20, nullptr, 0);
+		Font f = LoadFontEx("Resources/fonts/OCR-A Regular.ttf", 40, nullptr, 0);
 		if (f.texture.id == 0) f = GetFontDefault();
 		SetTextureFilter(f.texture, TEXTURE_FILTER_BILINEAR);
 		return f;

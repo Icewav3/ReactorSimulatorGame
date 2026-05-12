@@ -73,3 +73,7 @@ add_raylib_executable(ReactorSim
 
 # Add the project root to the include directories for cleaner include paths.
 target_include_directories(ReactorSim PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Debug-only: enable the DebugOverlay (F3 toggles hitbox outlines + coord HUD).
+# Release builds get inline no-op stubs — zero overhead, zero binary cost.
+target_compile_definitions(ReactorSim PRIVATE $<$<CONFIG:Debug>:REACTOR_DEBUG>)
