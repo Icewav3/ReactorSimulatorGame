@@ -21,6 +21,12 @@ void Console::Update(float dt, const OutputSnapshot& snap, InputBus& bus) {
 	}
 }
 
+void Console::Reset() {
+	for (auto& panel : panels_) {
+		panel->Reset();
+	}
+}
+
 void Console::Draw() {
 	for (auto& panel : panels_) {
 		panel->Draw();

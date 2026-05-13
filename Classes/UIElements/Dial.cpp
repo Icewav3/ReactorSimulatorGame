@@ -20,7 +20,12 @@ Dial::Dial(
 	  minValue_(min),
 	  maxValue_(max),
 	  currentValue_(value),
+	  initialValue_(value),
 	  label_(label) {
+}
+
+void Dial::Reset() {
+	currentValue_ = std::clamp(initialValue_, minValue_, maxValue_);
 }
 
 void Dial::Update(float deltaTime, const OutputSnapshot& snap, InputBus& bus) {

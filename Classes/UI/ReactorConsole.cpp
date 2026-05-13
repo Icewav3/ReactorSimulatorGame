@@ -31,9 +31,9 @@ ReactorConsole::ReactorConsole(Rectangle viewport) {
 
 		auto coolantDial = std::make_unique<Dial>(
 			cells[0].x, cells[0].y, cells[0].width, cells[0].height,
-			0.0f, 400.0f, 0.0f, "COOLANT °C");
+			0.0f, 1000.0f, 0.0f, "COOLANT °C");
 		coolantDial->SetReader([](const OutputSnapshot& s) { return s.coolantTemp; });
-		coolantDial->SetZones(270.0f, 360.0f);
+		coolantDial->SetZones(700.0f, 900.0f);
 		panel->Add(std::move(coolantDial));
 
 		auto pressDial = std::make_unique<Dial>(

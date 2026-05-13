@@ -23,6 +23,12 @@ void Panel::Update(float dt, const OutputSnapshot& snap, InputBus& bus) {
 	}
 }
 
+void Panel::Reset() {
+	for (auto& inst : instruments_) {
+		inst->Reset();
+	}
+}
+
 void Panel::Draw() {
 	// Chrome first so instruments paint on top of the bezel.
 	Theme::DrawPanelChrome(bounds_);

@@ -11,11 +11,20 @@ Lever::Lever(float x, float y, float width, float height,
              float initialValue, const std::string& label)
 	: Instrument(x, y, width, height),
 	  label_(label),
-	  currentValue_(std::clamp(initialValue, 0.0f, 1.0f)) {
+	  currentValue_(std::clamp(initialValue, 0.0f, 1.0f)),
+	  initialValue_(std::clamp(initialValue, 0.0f, 1.0f)) {
 }
 
 void Lever::SetValue(float v) {
 	currentValue_ = std::clamp(v, 0.0f, 1.0f);
+}
+
+void Lever::Reset() {
+	currentValue_ = initialValue_;
+	isDragging_   = false;
+	grabMouseY_   = 0.0f;
+	grabValue_    = 0.0f;
+	pastLatch_    = false;
 }
 
 Rectangle Lever::SlotRect() const {

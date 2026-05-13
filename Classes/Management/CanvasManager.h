@@ -32,6 +32,12 @@ public:
 	/// Renders the end screen with final game statistics.
 	void RenderEndScreen(const GameStatistics& stats);
 
+	/// Restores all play-mode console widgets to their constructed defaults.
+	/// Must be called when a new ReactorManager is built, otherwise the prior
+	/// run's slider/lever/handwheel positions will be pushed into the fresh
+	/// sim on the first PLAYING frame and overwrite its default state.
+	void ResetPlayConsole();
+
 private:
 	/// Draws the revenue display.
 	void DrawRevenue(float revenue);

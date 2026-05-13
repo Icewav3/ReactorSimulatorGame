@@ -31,6 +31,12 @@ public:
 	void Update(float dt, const OutputSnapshot& snap, InputBus& bus);
 	void Draw();
 
+	// Restores every instrument in every panel to its constructed default
+	// and clears transient interaction state. Call when starting a new run
+	// so the previous run's control positions don't leak into the new
+	// simulation on the very first frame of input.
+	void Reset();
+
 protected:
 	// Override to assign bounds to each panel based on viewport_.
 	// Default is a no-op (panels keep whatever bounds they were given).

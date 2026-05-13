@@ -32,6 +32,12 @@ public:
 	// widget paints on top of the bezel and face.
 	virtual void Draw() = 0;
 
+	// Restores the widget to its constructed initial value and clears any
+	// transient interaction state (drag, snap, flash). Called by Console::Reset
+	// when a new game session begins so stale control positions do not leak
+	// across runs into a freshly-built ReactorManager.
+	virtual void Reset() = 0;
+
 	// --- Getters ---
 	Vector2 GetPosition() const { return position_; }
 	Vector2 GetSize() const { return size_; }

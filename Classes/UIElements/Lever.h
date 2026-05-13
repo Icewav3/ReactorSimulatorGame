@@ -19,6 +19,7 @@ public:
 
 	void Update(float deltaTime, const OutputSnapshot& snap, InputBus& bus) override;
 	void Draw() override;
+	void Reset() override;
 
 	using Writer = std::function<void(InputBus&, float)>;
 	void SetWriter(Writer w) { writer_ = std::move(w); }
@@ -34,6 +35,7 @@ private:
 
 	std::string label_;
 	float currentValue_;             // 0..1; 1 = fully withdrawn (top)
+	float initialValue_;
 
 	// Drag state
 	bool  isDragging_  = false;

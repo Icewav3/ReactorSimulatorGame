@@ -40,6 +40,12 @@ CanvasManager::~CanvasManager() {
 	}
 }
 
+void CanvasManager::ResetPlayConsole() {
+	if (playConsole_) {
+		playConsole_->Reset();
+	}
+}
+
 void CanvasManager::RenderMainMenu() {
 	ClearBackground(RAYWHITE);
 

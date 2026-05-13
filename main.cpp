@@ -35,6 +35,7 @@ int main() {
 				case GameScene::INTRO_SEQUENCE:
 					reactorManager = std::make_unique<ReactorManager>();
 					gameManager.Reset();
+					canvasManager.ResetPlayConsole();
 					gameManager.SetScene(GameScene::PLAYING);
 					break;
 

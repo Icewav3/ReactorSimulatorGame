@@ -20,11 +20,22 @@ Handwheel::Handwheel(float x, float y, float width, float height,
                      float initialValue, const std::string& label)
 	: Instrument(x, y, width, height),
 	  label_(label),
-	  currentValue_(std::clamp(initialValue, 0.0f, 1.0f)) {
+	  currentValue_(std::clamp(initialValue, 0.0f, 1.0f)),
+	  initialValue_(std::clamp(initialValue, 0.0f, 1.0f)) {
 }
 
 void Handwheel::SetValue(float v) {
 	currentValue_ = std::clamp(v, 0.0f, 1.0f);
+}
+
+void Handwheel::Reset() {
+	currentValue_     = initialValue_;
+	isDragging_       = false;
+	grabAngleDeg_     = 0.0f;
+	lastDetentIdx_    = -1;
+	isSnapping_       = false;
+	snapTarget_       = 0.0f;
+	detentFlashTime_  = 0.0f;
 }
 
 float Handwheel::MouseAngleDeg() const {

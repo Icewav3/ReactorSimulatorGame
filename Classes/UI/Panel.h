@@ -31,6 +31,7 @@ public:
 
 	void Update(float dt, const OutputSnapshot& snap, InputBus& bus);
 	void Draw();
+	void Reset();
 
 protected:
 	// Override to position child instruments when bounds_ changes.

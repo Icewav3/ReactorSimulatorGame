@@ -25,6 +25,7 @@ public:
 
 	void Update(float deltaTime, const OutputSnapshot& snap, InputBus& bus) override;
 	void Draw() override;
+	void Reset() override;
 
 	using Reader = std::function<float(const OutputSnapshot&)>;
 	void SetReader(Reader reader) { reader_ = std::move(reader); }
@@ -41,6 +42,7 @@ private:
 	float minValue_;
 	float maxValue_;
 	float currentValue_;
+	float initialValue_;
 	float warningValue_ = -1.0f;
 	float dangerValue_  = -1.0f;
 	std::string label_;
