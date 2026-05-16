@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 project(ReactorSimulatorGame)
 
 # vcpkg integration: Try to find the toolchain file automatically if not provided
@@ -55,9 +55,11 @@ function(add_raylib_executable TARGET_NAME)
     endif()
 endfunction()
 
-# Collect all source files
-file(GLOB_RECURSE CLASS_SOURCES "Classes/*.cpp")
-file(GLOB_RECURSE CLASS_HEADERS "Classes/*.h")
+# Collect all source files. CONFIGURE_DEPENDS makes the build system re-glob
+# on every build invocation, so newly added .cpp / .h files under Classes/
+# are picked up without a manual `Reload CMake Project` in CLion.
+file(GLOB_RECURSE CLASS_SOURCES CONFIGURE_DEPENDS "Classes/*.cpp")
+file(GLOB_RECURSE CLASS_HEADERS CONFIGURE_DEPENDS "Classes/*.h")
 
 # Add the main executable
 add_raylib_executable(ReactorSim
@@ -71,3 +73,7 @@ add_raylib_executable(ReactorSim
 
 # Add the project root to the include directories for cleaner include paths.
 target_include_directories(ReactorSim PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Debug-only: enable the DebugOverlay (F3 toggles hitbox outlines + coord HUD).
+# Release builds get inline no-op stubs — zero overhead, zero binary cost.
+target_compile_definitions(ReactorSim PRIVATE $<$<CONFIG:Debug>:REACTOR_DEBUG>)

@@ -4,6 +4,9 @@
 #include "raylib.h"
 #include <string>
 
+struct OutputSnapshot;
+class InputBus;
+
 /**
  * @class Instrument
  * @brief An abstract base class for all UI elements in the simulation.
@@ -20,8 +23,20 @@ public:
 		  bounds_{x, y, width, height} {
 	}
 
-	/// Main update method, responsible for logic and rendering.
-	virtual void Update(float deltaTime) = 0;
+	// Reads from snap (frame-stable view of the sim) and writes intents into
+	// bus (drained at frame boundary). Widgets must not touch ReactorManager
+	// directly. Update is read/write only — drawing happens in Draw().
+	virtual void Update(float deltaTime, const OutputSnapshot& snap, InputBus& bus) = 0;
+
+	// Renders the widget. Called by Panel::Draw after panel chrome so the
+	// widget paints on top of the bezel and face.
+	virtual void Draw() = 0;
+
+	// Restores the widget to its constructed initial value and clears any
+	// transient interaction state (drag, snap, flash). Called by Console::Reset
+	// when a new game session begins so stale control positions do not leak
+	// across runs into a freshly-built ReactorManager.
+	virtual void Reset() = 0;
 
 	// --- Getters ---
 	Vector2 GetPosition() const { return position_; }
@@ -36,29 +51,13 @@ public:
 	}
 
 protected:
-	/// Pure virtual draw method to be implemented by derived classes.
-	virtual void Draw() = 0;
-
 	Vector2 position_;
 	Vector2 size_;
 	Rectangle bounds_;
 
-	// A shared color palette for a consistent vintage aesthetic.
-	static constexpr Color kVintageBeige = {240, 230, 200, 255}; // Sun-bleached beige
-	static constexpr Color kVintageBrown = {139, 120, 93, 255}; // Faded brown
-	static constexpr Color kVintageGreen = {85, 107, 47, 255}; // Military olive green
-	static constexpr Color kVintageRed = {139, 69, 19, 255}; // Rust red
-	static constexpr Color kVintageYellow = {218, 165, 32, 255}; // Aged gold/yellow
-	static constexpr Color kVintageBlack = {47, 47, 47, 255}; // Aged black
-	static constexpr Color kVintageWhite = {250, 245, 235, 255}; // Off-white/cream
-	static constexpr Color kVintageOrange = {205, 133, 63, 255}; // Faded orange
-
-	// Common styling constants for a vintage nuclear control panel theme.
-	static constexpr Color kDefaultTextColor = kVintageBlack;
-	static constexpr Color kDefaultBackgroundColor = kVintageBeige;
-	static constexpr Color kDefaultBorderColor = kVintageBrown;
-	static constexpr int kDefaultFontSize = 12;
-	static constexpr float kDefaultPadding = 5.0f;
+	// Widget-metric defaults. Colors live in Theme — pull from there.
+	static constexpr int   kDefaultFontSize = 12;
+	static constexpr float kDefaultPadding  = 5.0f;
 };
 
 #endif //CPP_PROJECTS_INSTRUMENT_H
