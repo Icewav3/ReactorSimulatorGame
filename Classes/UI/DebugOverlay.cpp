@@ -4,7 +4,6 @@
 
 #include "VirtualScreen.h"
 #include "Theme.h"
-#include <algorithm>
 #include <cstdio>
 
 namespace {
@@ -33,14 +32,15 @@ void DebugOverlay::DrawHitboxRing(Vector2 center, float rInner, float rOuter) {
 void DebugOverlay::DrawHUD() {
     if (!enabled_) return;
 
-    const Vector2 vm    = VirtualScreen::GetMouse();
-    const Vector2 raw   = GetMousePosition();
-    const Vector2 dpi   = GetWindowScaleDPI();
-    const float   sw    = static_cast<float>(GetScreenWidth());
-    const float   sh    = static_cast<float>(GetScreenHeight());
-    const float   scale = std::min(sw / 1920.0f, sh / 1080.0f);
-    const float   offX  = (sw - 1920.0f * scale) * 0.5f;
-    const float   offY  = (sh - 1080.0f * scale) * 0.5f;
+    const Vector2 vm     = VirtualScreen::GetMouse();
+    const Vector2 raw    = GetMousePosition();
+    const Vector2 dpi    = GetWindowScaleDPI();
+    const float   sw     = static_cast<float>(GetScreenWidth());
+    const float   sh     = static_cast<float>(GetScreenHeight());
+    const auto    layout = VirtualScreen::GetLayout();
+    const float   scale  = layout.scale;
+    const float   offX   = layout.offsetX;
+    const float   offY   = layout.offsetY;
 
     DrawLineEx({vm.x - 10.0f, vm.y}, {vm.x + 10.0f, vm.y}, 1.5f, kCrosshairColor);
     DrawLineEx({vm.x, vm.y - 10.0f}, {vm.x, vm.y + 10.0f}, 1.5f, kCrosshairColor);

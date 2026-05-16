@@ -14,6 +14,12 @@ namespace VirtualScreen {
     constexpr int kWidth = 1920;
     constexpr int kHeight = 1080;
 
+    struct ScreenLayout { float scale; float offsetX; float offsetY; };
+
+    // Returns the current letterbox scale + offset. Use this instead of
+    // recomputing manually so layout changes stay in one place.
+    ScreenLayout GetLayout();
+
     void Init();
     void Shutdown();
 

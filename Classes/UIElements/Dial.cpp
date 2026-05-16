@@ -42,7 +42,7 @@ void Dial::SetLabel(const std::string& label) {
 	label_ = label;
 }
 
-void Dial::SetZones(float warnValue, float dangerValue) {
+void Dial::SetZones(float warnValue, std::optional<float> dangerValue) {
 	warningValue_ = warnValue;
 	dangerValue_  = dangerValue;
 }
@@ -75,23 +75,23 @@ void Dial::Draw() {
 		return dialStartAngle_ + ((v - minValue_) / range) * sweep;
 	};
 
-	const float warnAngle = (warningValue_ >= 0.0f)
-		? valueToAngle(warningValue_)
+	const float warnAngle = warningValue_.has_value()
+		? valueToAngle(*warningValue_)
 		: dialEndAngle_;
-	const float dangAngle = (warningValue_ >= 0.0f && dangerValue_ >= 0.0f)
-		? valueToAngle(dangerValue_)
+	const float dangAngle = (warningValue_.has_value() && dangerValue_.has_value())
+		? valueToAngle(*dangerValue_)
 		: dialEndAngle_;
 
 	// Green zone: start → warning (or full range if no zones)
 	DrawRing(center, arcInner, arcOuter,
 	         dialStartAngle_, warnAngle, kArcSeg, Theme::kZoneGreen);
 
-	if (warningValue_ >= 0.0f) {
+	if (warningValue_.has_value()) {
 		// Amber zone: warning → danger (or max)
 		DrawRing(center, arcInner, arcOuter,
 		         warnAngle, dangAngle, kArcSeg / 2, Theme::kZoneAmber);
 
-		if (dangerValue_ >= 0.0f) {
+		if (dangerValue_.has_value()) {
 			// Red zone: danger → max
 			DrawRing(center, arcInner - 1.0f, arcOuter + 1.0f,
 			         dangAngle, dialEndAngle_, kArcSeg / 4, Theme::kZoneRed);

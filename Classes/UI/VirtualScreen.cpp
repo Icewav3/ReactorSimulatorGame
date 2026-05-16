@@ -4,24 +4,17 @@
 namespace {
     RenderTexture2D target_{};
     bool initialized_ = false;
+}
 
-    struct Layout {
-        float scale;
-        float offsetX;
-        float offsetY;
+VirtualScreen::ScreenLayout VirtualScreen::GetLayout() {
+    const float sw = static_cast<float>(GetScreenWidth());
+    const float sh = static_cast<float>(GetScreenHeight());
+    const float scale = std::min(sw / kWidth, sh / kHeight);
+    return {
+        scale,
+        (sw - kWidth  * scale) * 0.5f,
+        (sh - kHeight * scale) * 0.5f,
     };
-
-    Layout ComputeLayout() {
-        const float sw = static_cast<float>(GetScreenWidth());
-        const float sh = static_cast<float>(GetScreenHeight());
-        const float scale = std::min(sw / VirtualScreen::kWidth,
-                                     sh / VirtualScreen::kHeight);
-        return {
-            scale,
-            (sw - VirtualScreen::kWidth * scale) * 0.5f,
-            (sh - VirtualScreen::kHeight * scale) * 0.5f,
-        };
-    }
 }
 
 void VirtualScreen::Init() {
@@ -50,7 +43,7 @@ void VirtualScreen::End() {
 void VirtualScreen::Present() {
     // Letterbox bars.
     ClearBackground(BLACK);
-    const Layout l = ComputeLayout();
+    const ScreenLayout l = GetLayout();
     // Source height is negated because RenderTexture is stored bottom-up in
     // OpenGL; the negative flips it back during the blit.
     const Rectangle src{0.0f, 0.0f,
@@ -67,7 +60,7 @@ Vector2 VirtualScreen::GetMouse() {
     // Without this offset, hitboxes sit ~25px under their visuals.
     // Re-check this constant if window flags or platform change.
     constexpr float kClientChromeY = 25.0f;
-    const Layout l = ComputeLayout();
+    const ScreenLayout l = GetLayout();
     const Vector2 m = GetMousePosition();
     return {
         (m.x - l.offsetX) / l.scale,

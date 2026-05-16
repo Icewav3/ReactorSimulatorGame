@@ -35,8 +35,9 @@ void Panel::Draw() {
 	if (!label_.empty()) {
 		// Auto-size the dymo label tape to the text width plus a margin so
 		// long labels like "INSTRUMENTATION" aren't clipped by a fixed box.
-		const int textWidth = MeasureText(label_.c_str(), Theme::kFontSizeDymo);
-		const float w = static_cast<float>(textWidth) + 24.0f;
+		const float textWidth = MeasureTextEx(Theme::BoldFont(), label_.c_str(),
+		                                          static_cast<float>(Theme::kFontSizeDymo), 0.5f).x;
+		const float w = textWidth + 24.0f;
 		const float h = 22.0f;
 		Rectangle labelRect{
 			bounds_.x + (bounds_.width - w) * 0.5f,

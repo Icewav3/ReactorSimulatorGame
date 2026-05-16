@@ -9,14 +9,14 @@
 class ReactorManager;
 
 struct OutputSnapshot {
-	float reactorTemp;
-	float reactorPressure;
-	float coolantTemp;
-	float turbineRPM;
-	float turbinePowerMW;
-	float revenue;
-	bool  meltdown;
-	bool  kaboom;
+	float reactorTemp    = 0.0f;
+	float reactorPressure = 0.0f;
+	float coolantTemp    = 0.0f;
+	float turbineRPM     = 0.0f;
+	float turbinePowerMW = 0.0f;
+	float revenue        = 0.0f;
+	bool  meltdown       = false;
+	bool  kaboom         = false;
 
 	static OutputSnapshot From(const ReactorManager& sim);
 };
